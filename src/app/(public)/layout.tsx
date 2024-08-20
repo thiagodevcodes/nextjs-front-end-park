@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth";
 import nextAuthOptions from "../api/auth/[...nextauth]/auth";
 import { redirect } from "next/navigation";
-import Login from "@/components/Admin";
 
 interface SessionLayoutProps {
     children: React.ReactNode;
@@ -10,15 +9,14 @@ interface SessionLayoutProps {
 const SessionLayout = async ({ children }: SessionLayoutProps) => {
     const session = await getServerSession(nextAuthOptions)
 
-    if(!session) {
-        redirect("/")
+    if(session) {
+        redirect("/dashboard")
     }
 
-    return (
-        <Login>
-            { children }
-        </Login>         
-    )
+    return <>
+        { children }   
+    </>       
+       
 }
 
 export default SessionLayout;

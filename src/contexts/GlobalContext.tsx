@@ -17,7 +17,7 @@ interface CustomSession extends DefaultSession {
 interface MobileContextType {
   screenWidth: number;
   mobileActive: boolean;
-  sessionInfo: CustomSession["user"] | null; // Adjust to match the user type
+  sessionInfo: CustomSession["user"] | undefined; // Adjust to match the user type
   setMobileActive: (active: boolean) => void;
   status: string; // Include status in context type
 }
@@ -29,7 +29,7 @@ interface MyContextProviderProps {
 const defaultContextValue: MobileContextType = {
   screenWidth: 9999,
   mobileActive: false,
-  sessionInfo: null,
+  sessionInfo: undefined,
   setMobileActive: () => {},
   status: 'unauthenticated', 
 };
@@ -41,7 +41,7 @@ export const GlobalContextProvider: React.FC<MyContextProviderProps> = ({ childr
   const [mobileActive, setMobileActive] = useState<boolean>(false);
   const { data: session, status } = useSession();
 
-  const sessionInfo = (session as CustomSession)?.user || null; // Safe access and fallback to null
+  const sessionInfo = (session as CustomSession)?.user;
   
   useEffect(() => {
     const handleResize = () => {
@@ -55,6 +55,10 @@ export const GlobalContextProvider: React.FC<MyContextProviderProps> = ({ childr
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  if(status == "loading") {
+    return
+  }
 
   return (
     <GlobalContext.Provider value={{ screenWidth, mobileActive, setMobileActive, sessionInfo, status }}>

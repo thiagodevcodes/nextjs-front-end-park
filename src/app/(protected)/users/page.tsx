@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Spinner from "@/components/Spinner"; 
 import Table from "@/components/Table";
@@ -24,7 +24,7 @@ interface Role {
 }
 
 interface User {
-  userId: string; 
+  id: string; 
   name: string;
   username: string
   idRole: number;
@@ -34,14 +34,13 @@ const AdminUsers: React.FC = () => {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [message, setMessage] = useState<string>("");
   
   const { sessionInfo } = useContext(GlobalContext);
   const token = sessionInfo?.accessToken;
   const baseUrl = "http://localhost:8080";
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get<User[]>(`${baseUrl}/api/users`, {
@@ -103,7 +102,7 @@ const AdminUsers: React.FC = () => {
 
       <Table columns={["Nome", "Username", "Permissões"]}>
         { users.map((user) => (
-          <tr key={user.userId}>
+          <tr key={user.id}>
             <td className="p-3 text-center rounded-es-lg">{user.name}</td>
             <td className="p-3 text-center rounded-es-lg">{user.username}</td>
             <td className="p-3 text-center">
@@ -112,7 +111,7 @@ const AdminUsers: React.FC = () => {
             <td className="p-3 text-center rounded-ee-lg">
               <div className="flex gap-2 items-center justify-center">
                 <button className="bg-red-600 text-white rounded-lg px-4 py-1"><Trash /></button>
-                <Link href={`/admin/users/edit/${user.userId}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link>
+                <Link href={`/admin/users/edit/${user.id}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link>
               </div>
             </td>
           </tr>

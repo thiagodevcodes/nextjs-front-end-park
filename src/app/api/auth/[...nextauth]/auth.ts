@@ -23,13 +23,6 @@ const nextAuthOptions: NextAuthOptions = {
                         username: credentials?.email,
                         password: credentials?.password
                     }
-                }).catch((e) => {     
-                    if(e.code == "ECONNREFUSED") {
-                        console.error(e)
-                        throw new Error("Não foi possivel se conectar com a API - " + e.code)  
-                    } 
-                    console.error(e)
-                    throw new Error("Não foi possivel realizar o login - " + e.code + " " + e.response.status)
                 })
 
                 const user = await response.data
@@ -43,7 +36,7 @@ const nextAuthOptions: NextAuthOptions = {
     ],
 
     pages: {
-        signIn: '/dashboard'
+        signIn: '/'
     },
 
     session: {
