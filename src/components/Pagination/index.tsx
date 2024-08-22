@@ -50,7 +50,6 @@ const PaginationBox: React.FC<PaginationBoxProps> = ({ currentPage, setCurrentPa
             items.push(
                 <PaginationItem key={page}>
                     <PaginationLink
-                        href="#"
                         isActive={page === currentPage}
                         onClick={() => handlePageChange(page)}
                     >
