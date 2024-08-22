@@ -2,40 +2,55 @@
 
 import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import Spinner from "@/components/Spinner"; 
+import Spinner from "@/components/Spinner";
 import Table from "@/components/Table";
 import { Users, Trash, UserPen } from "lucide-react";
 import axios from "axios";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import Link from "next/link";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-
-interface Role {
-  roleId: string;
-  name: string
-}
+import PaginationBox from "@/components/Pagination";
 
 interface User {
-  id: string; 
+  id: string;
   name: string;
   username: string
   idRole: number;
 }
 
+interface Page<User> {
+  content: User[];
+  pageable: Pageable;
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+}
+
+interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
+interface Sort {
+  sorted: boolean;
+  unsorted: boolean;
+  empty: boolean;
+}
+
 const AdminUsers: React.FC = () => {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string>("");
-  
+  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [size, setSize] = useState<number>(5)
+  const [users, setUsers] = useState<User[]>([]);
+
   const { sessionInfo } = useContext(GlobalContext);
   const token = sessionInfo?.accessToken;
   const baseUrl = "http://localhost:8080";
@@ -43,7 +58,7 @@ const AdminUsers: React.FC = () => {
   useLayoutEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get<User[]>(`${baseUrl}/api/users`, {
+        const response = await axios.get<Page<User>>(`${baseUrl}/api/users?size=${size}&page=${currentPage}`, {
           headers: {
             "Authorization": `Bearer ${token}`
           },
@@ -51,8 +66,9 @@ const AdminUsers: React.FC = () => {
 
         if (response.status === 200) {
           console.log(response.data)
-          setUsers(response.data);
-        } 
+          setUsers(response.data.content);
+          setTotalPages(response.data.totalPages);
+        }
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           if (error.response.status === 401 || error.response.status === 403) {
@@ -71,14 +87,14 @@ const AdminUsers: React.FC = () => {
     };
 
     fetchUsers();
-  }, [baseUrl, token]);
+  }, [baseUrl, token, size, currentPage]);
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Spinner/>
+        <Spinner />
       </div>
-      
+
     )
   }
 
@@ -101,7 +117,7 @@ const AdminUsers: React.FC = () => {
       </div>
 
       <Table columns={["Nome", "Username", "Permissões"]}>
-        { users.map((user) => (
+        {users.map((user) => (
           <tr key={user.id}>
             <td className="p-3 text-center rounded-es-lg">{user.name}</td>
             <td className="p-3 text-center rounded-es-lg">{user.username}</td>
@@ -118,30 +134,7 @@ const AdminUsers: React.FC = () => {
         ))}
       </Table>
 
-      <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+      <PaginationBox currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} size={size}/>
     </section>
   );
 };
