@@ -26,7 +26,7 @@ const AdminDashboard: React.FC = () => {
         });
 
         if (response.status === 200) {
-          setTotalCount(response.data.length); 
+          setTotalCount(response.data.totalElements); 
         } 
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

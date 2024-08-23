@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Spinner from "@/components/Spinner";
 import Table from "@/components/Table";
@@ -11,10 +11,18 @@ import Link from "next/link";
 import PaginationBox from "@/components/Pagination";
 
 interface User {
-  id: string;
+  id: number,
+  username: string;
+  password: string;
+  person: Person;
+  role: number;
+}
+
+interface Person {
   name: string;
-  username: string
-  idRole: number;
+  email: string;
+  phone: string;
+  cpf: string;
 }
 
 interface Page<User> {
@@ -44,7 +52,6 @@ interface Sort {
 
 const AdminUsers: React.FC = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState<number>(0)
@@ -55,9 +62,10 @@ const AdminUsers: React.FC = () => {
   const token = sessionInfo?.accessToken;
   const baseUrl = "http://localhost:8080";
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
+
         const response = await axios.get<Page<User>>(`${baseUrl}/api/users?size=${size}&page=${currentPage}`, {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -67,6 +75,7 @@ const AdminUsers: React.FC = () => {
         if (response.status === 200) {
           console.log(response.data)
           setUsers(response.data.content);
+          console.log(users)
           setTotalPages(response.data.totalPages);
         }
       } catch (error) {
@@ -82,21 +91,12 @@ const AdminUsers: React.FC = () => {
           setMessage("Erro ao buscar usuários.");
         }
       } finally {
-        setLoading(false);
+    
       }
     };
 
     fetchUsers();
   }, [baseUrl, token, size, currentPage]);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner />
-      </div>
-
-    )
-  }
 
   const handleAddUser = () => {
     router.push('/users/new');
@@ -119,15 +119,15 @@ const AdminUsers: React.FC = () => {
       <Table columns={["Nome", "Username", "Permissões"]}>
         {users.map((user) => (
           <tr key={user.id}>
-            <td className="p-3 text-center rounded-es-lg">{user.name}</td>
+            <td className="p-3 text-center rounded-es-lg">{user.person.name}</td>
             <td className="p-3 text-center rounded-es-lg">{user.username}</td>
             <td className="p-3 text-center">
-              {user.idRole == 1 ? "Admin" : "Normal"}
+              {user.role == 1 ? "Admin" : "Normal"}
             </td>
             <td className="p-3 text-center rounded-ee-lg">
               <div className="flex gap-2 items-center justify-center">
                 <button className="bg-red-600 text-white rounded-lg px-4 py-1"><Trash /></button>
-                <Link href={`/admin/users/edit/${user.id}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link>
+                <Link href={`/users/edit/${user.id}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link>
               </div>
             </td>
           </tr>
