@@ -9,6 +9,7 @@ import axios from "axios";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import Link from "next/link";
 import PaginationBox from "@/components/Pagination";
+import Modal from "@/components/Modal";
 
 interface User {
   id: number,
@@ -51,7 +52,6 @@ interface Sort {
 }
 
 const AdminUsers: React.FC = () => {
-  const router = useRouter();
   const [message, setMessage] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState<number>(0)
@@ -90,21 +90,15 @@ const AdminUsers: React.FC = () => {
           console.error("Erro ao buscar usuários:", error);
           setMessage("Erro ao buscar usuários.");
         }
-      } finally {
-    
       }
     };
 
     fetchUsers();
   }, [baseUrl, token, size, currentPage]);
 
-  const handleAddUser = () => {
-    router.push('/users/new');
-  };
-
   return (
     <section className="mx-10 px-3 py-1 mb-4">
-      <div className="flex justify-between my-5">
+      <div className="flex justify-between my-5 items-center">
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <Users />
@@ -113,7 +107,11 @@ const AdminUsers: React.FC = () => {
           <span>Lista de todos os usuários do sistema</span>
           {message && <p>{message}</p>}
         </div>
-        <button className="text-center bg-black text-white rounded-lg px-5 py-2 my-5" onClick={handleAddUser}>Adicionar</button>
+
+        <div className="bg-black text-white rounded-lg h-full" >
+          <Modal title="Adicionar Usuário" url="users" method="POST"/>
+        </div>
+        
       </div>
 
       <Table columns={["Nome", "Username", "Permissões"]}>
@@ -127,14 +125,21 @@ const AdminUsers: React.FC = () => {
             <td className="p-3 text-center rounded-ee-lg">
               <div className="flex gap-2 items-center justify-center">
                 <button className="bg-red-600 text-white rounded-lg px-4 py-1"><Trash /></button>
-                <Link href={`/users/edit/${user.id}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link>
+  
+                <div className="bg-yellow-600 text-white rounded-lg">
+                  <Modal title="Editar" url={`users?id=${user.id}`} method="PUT" id={user.id}/>
+                </div>
+                
+      
+                
+                {/* <Link href={`/users/edit/${user.id}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link> */}
               </div>
             </td>
           </tr>
         ))}
       </Table>
 
-      <PaginationBox currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} size={size}/>
+      <PaginationBox currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} size={size} />
     </section>
   );
 };
