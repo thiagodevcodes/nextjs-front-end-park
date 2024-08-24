@@ -10,7 +10,7 @@ const Table: React.FC<TableProps> = ({
 }) => {
 
     return (
-        <table className="w-full my-5">
+        <table className="w-[1000px] my-5 min-w-[700px]">
             <thead className="bg-black text-white ">
                 <tr>
                     {columns.map((item, index) => (

@@ -9,7 +9,8 @@ import axios from "axios";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import Link from "next/link";
 import PaginationBox from "@/components/Pagination";
-import Modal from "@/components/Modal";
+import Modal from "@/components/ModalForm";
+import { fetchUsers } from "@/services/axios";
 
 interface User {
   id: number,
@@ -63,42 +64,15 @@ const AdminUsers: React.FC = () => {
   const baseUrl = "http://localhost:8080";
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-
-        const response = await axios.get<Page<User>>(`${baseUrl}/api/users?size=${size}&page=${currentPage}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          },
-        });
-
-        if (response.status === 200) {
-          console.log(response.data)
-          setUsers(response.data.content);
-          console.log(users)
-          setTotalPages(response.data.totalPages);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          if (error.response.status === 401 || error.response.status === 403) {
-            setMessage("Usuário não autorizado");
-          } else {
-            setMessage("Erro ao buscar usuários.");
-          }
-          console.error("Erro na resposta da solicitação:", error.response);
-        } else {
-          console.error("Erro ao buscar usuários:", error);
-          setMessage("Erro ao buscar usuários.");
-        }
-      }
-    };
-
-    fetchUsers();
+    fetchUsers(token, currentPage).then((res: any) => {
+      setUsers(res.content)
+      setTotalPages(res.totalPages)
+    })
   }, [baseUrl, token, size, currentPage]);
 
   return (
     <section className="mx-10 px-3 py-1 mb-4">
-      <div className="flex justify-between my-5 items-center">
+      <div className="flex justify-center gap-96 my-5 items-center">
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <Users />
@@ -109,37 +83,38 @@ const AdminUsers: React.FC = () => {
         </div>
 
         <div className="bg-black text-white rounded-lg h-full" >
-          <Modal title="Adicionar Usuário" url="users" method="POST"/>
+          <Modal title="Adicionar Usuário" url="users" method="POST">
+            
+          </Modal>
         </div>
         
       </div>
 
-      <Table columns={["Nome", "Username", "Permissões"]}>
-        {users.map((user) => (
-          <tr key={user.id}>
-            <td className="p-3 text-center rounded-es-lg">{user.person.name}</td>
-            <td className="p-3 text-center rounded-es-lg">{user.username}</td>
-            <td className="p-3 text-center">
-              {user.role == 1 ? "Admin" : "Normal"}
-            </td>
-            <td className="p-3 text-center rounded-ee-lg">
-              <div className="flex gap-2 items-center justify-center">
-                <button className="bg-red-600 text-white rounded-lg px-4 py-1"><Trash /></button>
-  
-                <div className="bg-yellow-600 text-white rounded-lg">
-                  <Modal title="Editar" url={`users?id=${user.id}`} method="PUT" id={user.id}/>
+      <div className="overflow-auto flex justify-center">
+        <Table columns={["Nome", "Username", "Permissões"]}>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td className="p-3 text-center rounded-es-lg">{user.person.name}</td>
+              <td className="p-3 text-center rounded-es-lg">{user.username}</td>
+              <td className="p-3 text-center">
+                {user.role == 1 ? "Admin" : "Normal"}
+              </td>
+              <td className="p-3 text-center rounded-ee-lg">
+                <div className="flex gap-2 items-center justify-center">
+                  <button className="bg-red-600 text-white rounded-lg px-4 py-1"><Trash /></button>
+    
+                  <div className="bg-yellow-600 text-white rounded-lg">
+                    <Modal title="Editar Usuário" url="users" method="PUT" id={user.id}/>
+                  </div>
+        
                 </div>
-                
-      
-                
-                {/* <Link href={`/users/edit/${user.id}`} className="bg-yellow-600 text-white rounded-lg px-4 py-1"><UserPen /></Link> */}
-              </div>
-            </td>
-          </tr>
-        ))}
-      </Table>
+              </td>
+            </tr>
+          ))}
+        </Table>
+      </div>
 
-      <PaginationBox currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} size={size} />
+      <PaginationBox currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} size={5} />
     </section>
   );
 };
