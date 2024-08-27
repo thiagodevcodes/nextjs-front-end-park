@@ -1,16 +1,35 @@
-import { getServerSession } from "next-auth";
-import nextAuthOptions from "../api/auth/[...nextauth]/auth";
-import { redirect } from "next/navigation";
+"use client"
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Spinner from "@/components/Spinner";
+import { useEffect, useState } from "react";
 
 interface SessionLayoutProps {
     children: React.ReactNode;
 }
 
-const SessionLayout = async ({ children }: SessionLayoutProps) => {
-    const session = await getServerSession(nextAuthOptions)
+const SessionLayout = ({ children }: SessionLayoutProps) => {
+    const { status } = useSession();
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
-    if(session) {
-        redirect("/dashboard")
+    useEffect(() => {
+        if (status === "loading") {
+            setLoading(true);
+        } else if (status === "authenticated") {
+            router.replace("/dashboard");
+        } else if (status === "unauthenticated") {
+            setLoading(false);
+        }
+    }, [status, router]);
+
+    if(loading) {
+        return (
+            <div className="flex items-center justify-center h-dvh">
+                <Spinner/>
+            </div>  
+        )
     }
 
     return <>

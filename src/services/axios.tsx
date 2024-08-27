@@ -43,6 +43,8 @@ interface Sort {
 const baseUrl = "http://localhost:8080"
 
 const handleCreate = async (data: any, token: string | undefined, url: string) => {
+    let message = ""
+
     try {
         const response = await axios({
             method: "POST",
@@ -55,21 +57,22 @@ const handleCreate = async (data: any, token: string | undefined, url: string) =
         });
 
         if (response.status === 200) {
-            return response.data;
-        }
-
+            return { success: true, message: "Criado com sucesso", data: response.data };
+        } 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
-                console.log("Usuário não autorizado");
+                message = "Usuário não autorizado";
             } else if (error.response.status === 422) {
-                console.log("Usuário já existente");
+                message = "Dado já existente";
             } else {
-                console.log("Erro na resposta da solicitação.");
+                message = "Erro inesperado na resposta da solicitação.";
             }
         } else {
-            console.log("Erro ao cadastrar usuário.");
+            message = "Erro ao cadastrar.";
         }
+
+        return { success: false, message: message };
     }
 };
 
@@ -96,20 +99,20 @@ const handleUpdate = async (data: any, token: string | undefined, url: string, i
             if (error.response.status === 401 || error.response.status === 403) {
                 console.log("Usuário não autorizado");
             } else if (error.response.status === 422) {
-                console.log("Usuário já existente");
+                console.log("Dado já existente");
             } else {
                 console.log("Erro na resposta da solicitação.");
             }
         } else {
-            console.log("Erro ao cadastrar usuário.");
+            console.log("Erro ao cadastrar.");
         }
     }
 };
 
-const fetchUsers = async (token: string | undefined, currentPage: number) => {
+const fetchUsers = async (token: string | undefined, currentPage: number, url: string) => {
     try {
 
-        const response = await axios.get<Page<User>>(`${baseUrl}/api/users?size=${5}&page=${currentPage}`, {
+        const response = await axios.get<Page<User>>(`${baseUrl}/api/${url}?size=${5}&page=${currentPage}`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             },
@@ -124,21 +127,21 @@ const fetchUsers = async (token: string | undefined, currentPage: number) => {
             if (error.response.status === 401 || error.response.status === 403) {
                 console.log("Usuário não autorizado");
             } else {
-                console.log("Erro ao buscar usuários.");
+                console.log("Erro ao buscar.");
             }
             console.error("Erro na resposta da solicitação:", error.response);
         } else {
-            console.error("Erro ao buscar usuários:", error);
-            console.log("Erro ao buscar usuários.");
+            console.error("Erro ao buscar:", error);
+            console.log("Erro ao buscar.");
         }
     }
 };
 
-const fetchUser = async (token: string | undefined, id: number | undefined) => {
+const fetchUser = async (token: string | undefined, id: number | undefined, url: string) => {
     try {
         if (!id) return
 
-        const response = await axios.get(baseUrl + `/api/users/find?id=${id}`, {
+        const response = await axios.get(baseUrl + `/api/${url}/find?id=${id}`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             },
@@ -152,14 +155,42 @@ const fetchUser = async (token: string | undefined, id: number | undefined) => {
             if (error.response.status === 401 || error.response.status === 403) {
                 console.log("Usuário não autorizado");
             } else {
-                console.log("Erro ao buscar usuários.");
+                console.log("Erro ao buscar.");
             }
             console.error("Erro na resposta da solicitação:", error.response);
         } else {
-            console.error("Erro ao buscar usuários:", error);
-            console.log("Erro ao buscar usuários.");
+            console.error("Erro ao buscar:", error);
+            console.log("Erro ao buscar.");
         }
     }
 };
 
-export { handleCreate, handleUpdate, fetchUsers, fetchUser }
+const deleteUser = async (token: string | undefined, id: number | undefined, url: string) => {
+    try {
+        if (!id) return
+
+        const response = await axios.delete(baseUrl + `/api/${url}?id=${id}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+        });
+
+        if (response.status === 200) {
+            return
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            if (error.response.status === 401 || error.response.status === 403) {
+                console.log("Usuário não autorizado");
+            } else {
+                console.log("Erro ao deletar.");
+            }
+            console.error("Erro na resposta da solicitação:", error.response);
+        } else {
+            console.error("Erro ao buscar:", error);
+            console.log("Erro ao buscar.");
+        }
+    }  
+}
+
+export { handleCreate, handleUpdate, fetchUsers, fetchUser, deleteUser }

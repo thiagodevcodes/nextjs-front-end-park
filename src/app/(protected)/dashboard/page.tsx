@@ -15,7 +15,7 @@ const AdminDashboard: React.FC = () => {
   const { sessionInfo } = useContext(GlobalContext);
   const token = sessionInfo?.accessToken;
   const baseUrl = "http://localhost:8080";
-
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -40,7 +40,6 @@ const AdminDashboard: React.FC = () => {
 
     fetchUsers();
   }, [baseUrl, token, totalCount]);
-
 
   return (
     <section className="mx-10 px-3 py-1 mb-4 min-h-s">
