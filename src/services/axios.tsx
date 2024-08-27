@@ -77,8 +77,10 @@ const handleCreate = async (data: any, token: string | undefined, url: string) =
 };
 
 const handleUpdate = async (data: any, token: string | undefined, url: string, id: number | undefined) => {
+    let message = ""
     try {
         if (!id) return
+        
 
         const response = await axios({
             method: "PUT",
@@ -91,21 +93,23 @@ const handleUpdate = async (data: any, token: string | undefined, url: string, i
         });
 
         if (response.status === 200) {
-            return response.data;
-        }
+            return { success: true, message: "Atualizado com sucesso", data: response.data };
+        } 
 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
-                console.log("Usuário não autorizado");
+                message = "Usuário não autorizado";
             } else if (error.response.status === 422) {
-                console.log("Dado já existente");
+                message = "Dado já existente";
             } else {
-                console.log("Erro na resposta da solicitação.");
+                message = "Erro inesperado na resposta da solicitação.";
             }
         } else {
-            console.log("Erro ao cadastrar.");
+            message = "Erro ao cadastrar.";
         }
+
+        return { success: false, message: message };
     }
 };
 
@@ -166,6 +170,7 @@ const fetchUser = async (token: string | undefined, id: number | undefined, url:
 };
 
 const deleteUser = async (token: string | undefined, id: number | undefined, url: string) => {
+    let message = ""
     try {
         if (!id) return
 
@@ -176,21 +181,23 @@ const deleteUser = async (token: string | undefined, id: number | undefined, url
         });
 
         if (response.status === 200) {
-            return
-        }
+            return { success: true, message: "Criado com sucesso", data: response.data };
+        } 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
-                console.log("Usuário não autorizado");
+                message = "Usuário não autorizado";
+            } else if (error.response.status === 422) {
+                message = "Dado já existente";
             } else {
-                console.log("Erro ao deletar.");
+                message = "Erro inesperado na resposta da solicitação.";
             }
-            console.error("Erro na resposta da solicitação:", error.response);
         } else {
-            console.error("Erro ao buscar:", error);
-            console.log("Erro ao buscar.");
+            message = "Erro ao cadastrar.";
         }
-    }  
+
+        return { success: false, message: message };
+    }
 }
 
 export { handleCreate, handleUpdate, fetchUsers, fetchUser, deleteUser }

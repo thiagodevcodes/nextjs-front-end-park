@@ -14,36 +14,28 @@ import {
 } from "@/components/ui/dialog"
 
 interface ModalProps {
-    url: string;
-    method: string;
+    Icon?: React.ElementType;
+    trigger?: string;
     title?: string;
     className?: string
     children?: React.ReactNode;
-    id?: number
+    id?: number,
+    description?: string,
+
   }
 
-interface FormData {
-    username: string;
-    password: string;
-    person: Person;
-    role: number;
-}
+  
 
-interface Person {
-    name: string;
-    email: string;
-    phone: string;
-    cpf: string;
-}
+const Modal = ({ trigger, title, children, description, Icon }: ModalProps) => { 
+    const [isOpen, setIsOpen] = useState(false);
 
-const Modal = ({ url, method, title, children, id }: ModalProps) => {   
     return (
         <Dialog>    
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle className="text-3xl font-bold">{title}</DialogTitle>
                     <DialogDescription>
-                        Preencha os campos abaixo corretamente para submeter o formulário
+                        { description }
                     </DialogDescription>
                 </DialogHeader>
 
@@ -51,7 +43,7 @@ const Modal = ({ url, method, title, children, id }: ModalProps) => {
 
 
             </DialogContent>
-            <DialogTrigger className="px-4 py-1">{title}</DialogTrigger>
+            <DialogTrigger className=" px-4 py-1">{Icon ? <Icon/> : trigger}</DialogTrigger>
         </Dialog>
     )
 }

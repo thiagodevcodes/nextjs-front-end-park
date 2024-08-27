@@ -66,7 +66,7 @@ const AdminUsersEdit = ({ params }: { params: { id: number } }) => {
   });
 
   useEffect(() => {
-    if (id !== undefined) {   
+    if (id !== undefined) {
       fetchUser(token, id, "users").then((user: User) => {
 
         reset({
@@ -83,51 +83,64 @@ const AdminUsersEdit = ({ params }: { params: { id: number } }) => {
     }
   }, [id, token, reset]);
 
-  
+
   const createData = async (data: any) => {
     console.log(data)
     const result = await handleUpdate(data, token, "users", id);
-
+    
     if (result) {
+      console.log(result)
       setMessage(result.message)
     }
   }
 
+  
+
   return (
     <div className="flex flex-col gap-2 justify-center items-center h-screen">
       <h1>Edição de Usuário</h1>
-      
-      <form onSubmit={handleSubmit(createData)} className="flex flex-col gap-2">
-        <FormField name="person.name" control={control} placeholder="Nome" />
-        {errors.person?.name && <p className="text-red-600">{errors.person.name.message}</p>}
-        <FormField name="username" control={control} placeholder="Nome de Usuário" />
-        {errors.username && <p className="text-red-600">{errors.username.message}</p>}
-        <FormField name="person.cpf" control={control} placeholder="CPF" />
-        {errors.person?.cpf && <p className="text-red-600">{errors.person.cpf.message}</p>}
-        <FormField name="person.email" control={control} placeholder="Email" />
-        {errors.person?.email && <p className="text-red-600">{errors.person.email.message}</p>}
-        <FormField name="person.phone" control={control} placeholder="Telefone" />
-        {errors.person?.phone && <p className="text-red-600">{errors.person.phone.message}</p>}
 
-        <Controller
-          name="role"
-          control={control}
-          render={({ field }) => (
-            <Select
-              onValueChange={(value) => field.onChange(Number(value))}
-              value={field.value.toString()}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Permissão" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2">Colaborador</SelectItem>
-                <SelectItem value="1">Administrador</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {errors.role && <p className="text-red-600" >{errors.role.message}</p>}
+      <form onSubmit={handleSubmit(createData)} className="flex flex-col gap-2">
+        <div className="flex gap-4">
+          <FormField name="person.name" control={control} placeholder="Nome" />
+          {errors.person?.name && <p className="text-red-600">{errors.person.name.message}</p>}
+          <FormField name="username" control={control} placeholder="Nome de Usuário" />
+          {errors.username && <p className="text-red-600">{errors.username.message}</p>}
+        </div>
+
+        <div className="flex gap-4">
+          <FormField name="person.cpf" control={control} placeholder="CPF" />
+          {errors.person?.cpf && <p className="text-red-600">{errors.person.cpf.message}</p>}
+          <FormField name="person.email" control={control} placeholder="Email" />
+          {errors.person?.email && <p className="text-red-600">{errors.person.email.message}</p>}
+        </div>
+
+        <div className="flex gap-4">
+          <FormField name="person.phone" control={control} placeholder="Telefone" />
+          {errors.person?.phone && <p className="text-red-600">{errors.person.phone.message}</p>}
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
+              <Select
+                onValueChange={(value) => field.onChange(Number(value))}
+                value={field.value.toString()}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Permissão" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">Colaborador</SelectItem>
+                  <SelectItem value="1">Administrador</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.role && <p className="text-red-600" >{errors.role.message}</p>}
+        </div>
+
+
+
 
         <div className="text-center">
           {message ? message : null}
