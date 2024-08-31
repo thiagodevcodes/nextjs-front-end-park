@@ -66,7 +66,7 @@ const handleCreate = async (data: any, token: string | undefined, url: string) =
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = "Erro inesperado na resposta da solicitação.";
+                message = error.response.data.message;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -103,7 +103,7 @@ const handleUpdate = async (data: any, token: string | undefined, url: string, i
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = "Erro inesperado na resposta da solicitação.";
+                message = error.response.data.message;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -114,6 +114,7 @@ const handleUpdate = async (data: any, token: string | undefined, url: string, i
 };
 
 const fetchUsers = async (token: string | undefined, currentPage: number, url: string) => {
+    let message = ""
     try {
 
         const response = await axios.get<Page<User>>(`${baseUrl}/api/${url}?size=${5}&page=${currentPage}`, {
@@ -129,19 +130,22 @@ const fetchUsers = async (token: string | undefined, currentPage: number, url: s
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
-                console.log("Usuário não autorizado");
+                message = "Usuário não autorizado";
+            } else if (error.response.status === 422) {
+                message = "Dado já existente";
             } else {
-                console.log("Erro ao buscar.");
+                message = error.response.data.message;
             }
-            console.error("Erro na resposta da solicitação:", error.response);
         } else {
-            console.error("Erro ao buscar:", error);
-            console.log("Erro ao buscar.");
+            message = "Erro ao cadastrar.";
         }
+
+        return { success: false, message: message };
     }
 };
 
 const fetchUser = async (token: string | undefined, id: number | undefined, url: string) => {
+    let message = ""
     try {
         if (!id) return
 
@@ -157,15 +161,17 @@ const fetchUser = async (token: string | undefined, id: number | undefined, url:
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
-                console.log("Usuário não autorizado");
+                message = "Usuário não autorizado";
+            } else if (error.response.status === 422) {
+                message = "Dado já existente";
             } else {
-                console.log("Erro ao buscar.");
+                message = error.response.data.message;
             }
-            console.error("Erro na resposta da solicitação:", error.response);
         } else {
-            console.error("Erro ao buscar:", error);
-            console.log("Erro ao buscar.");
+            message = "Erro ao cadastrar.";
         }
+
+        return { success: false, message: message };
     }
 };
 
@@ -180,8 +186,8 @@ const deleteUser = async (token: string | undefined, id: number | undefined, url
             },
         });
 
-        if (response.status === 200) {
-            return { success: true, message: "Criado com sucesso", data: response.data };
+        if (response.status === 204) {
+            return { success: true, message: "Deletado com sucesso", data: response.data };
         } 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -190,7 +196,7 @@ const deleteUser = async (token: string | undefined, id: number | undefined, url
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = "Erro inesperado na resposta da solicitação.";
+                message = error.response.data.message;
             }
         } else {
             message = "Erro ao cadastrar.";

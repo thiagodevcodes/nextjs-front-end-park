@@ -10,16 +10,16 @@ const Table: React.FC<TableProps> = ({
 }) => {
 
     return (
-        <table className="w-[1000px] my-5 min-w-[700px]">
-            <thead className="bg-black text-white ">
-                <tr>
+        <table className="w-[1000px] my-5 min-w-[700px] rounded-lg bg-white">
+            <thead className=" text-white">
+                <tr className="">
                     {columns.map((item, index) => (
-                        <th className={`p-3 ${index === 0 && 'rounded-ss-lg'}`} key={index}>{item}</th>
+                        <th className={`p-3 bg-black ${index === 0 && "rounded-ss-lg"}`} key={index}>{item}</th>
                     ))}
-                    <th className="p-3 rounded-se-lg">Ações</th>
+                    <th className="p-3 rounded-se-lg bg-black">Ações</th>
                 </tr>
             </thead>
-            <tbody className="bg-white">
+            <tbody>
                 {children}
             </tbody>
         </table> 

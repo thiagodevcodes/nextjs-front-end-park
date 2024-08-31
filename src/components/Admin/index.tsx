@@ -30,7 +30,6 @@ const Login = ({ children }: SessionLayoutProps) => {
 
     const toggleDropdown = () => {
       setIsOpen(!isOpen);
-      console.log(isOpen)
     };
 
     return (

@@ -2,6 +2,7 @@ import { GlobalContextProvider } from "@/contexts/GlobalContext";
 import NextAuthSessionProvider from "@/providers/sessionProvider";
 import type { Metadata } from "next";
 import "../styles/globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "SysPark",
@@ -23,6 +24,7 @@ export default async function RootLayout({
             {children}
           </GlobalContextProvider>
         </NextAuthSessionProvider>
+        <Toaster />
       </body>
     </html>
   );

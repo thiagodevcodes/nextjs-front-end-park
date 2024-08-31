@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Spinner from "@/components/Spinner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Toaster } from "@/components/ui/toaster"
 
 interface SessionLayoutProps {
     children: React.ReactNode;
@@ -37,6 +38,7 @@ const SessionLayout = ({ children }: SessionLayoutProps) => {
         <Login>
             {children}
         </Login>
+        
     );
 }
 
