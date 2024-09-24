@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { fetchUser, handleCreate, handleUpdate } from "@/services/axios";
+import { handleCreate, handleUpdate } from "@/services/axios";
 import { Button } from "@/components/ui/button";
 
 interface User {
@@ -93,8 +93,6 @@ const AdminUsersEdit = ({ params }: { params: { id: number } }) => {
       setMessage(result.message)
     }
   }
-
-  
 
   return (
     <div className="flex flex-col gap-2 justify-center items-center h-screen">

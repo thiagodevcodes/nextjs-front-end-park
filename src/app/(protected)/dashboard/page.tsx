@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from "react";
 const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState<number>(); // Adicione o estado para a contagem total
+  const [totalVehicles, setTotalVehicles] = useState<number>(); // Adicione o estado para a contagem total
 
   const { sessionInfo } = useContext(GlobalContext);
   const token = sessionInfo?.accessToken;

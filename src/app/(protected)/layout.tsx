@@ -5,14 +5,23 @@ import { useSession } from "next-auth/react";
 import Spinner from "@/components/Spinner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Toaster } from "@/components/ui/toaster"
+import { Session } from "next-auth";
+import { User } from "next-auth";
 
 interface SessionLayoutProps {
     children: React.ReactNode;
 }
 
+interface CustomUser extends User {
+    role: string;
+}
+
+interface CustomSession extends Session {
+    user: CustomUser;
+}
+
 const SessionLayout = ({ children }: SessionLayoutProps) => {
-    const { status } = useSession();
+    const { data: session, status } = useSession();
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -20,6 +29,11 @@ const SessionLayout = ({ children }: SessionLayoutProps) => {
         if (status === "loading") {
             setLoading(true);
         } else if (status === "authenticated") {
+            const customSession = session as CustomSession;
+            if(customSession.user.role != "ADMIN") {
+                console.log(session)
+                router.replace("/dashboard")
+            }
             setLoading(false);
         } else if (status === "unauthenticated") {
             router.replace("/");

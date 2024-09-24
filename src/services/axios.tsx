@@ -66,7 +66,7 @@ const handleCreate = async (data: any, token: string | undefined, url: string) =
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = error.response.data.message;
+                message = error.response.data.messages;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -103,7 +103,7 @@ const handleUpdate = async (data: any, token: string | undefined, url: string, i
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = error.response.data.message;
+                message = error.response.data.messages;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -113,11 +113,10 @@ const handleUpdate = async (data: any, token: string | undefined, url: string, i
     }
 };
 
-const fetchUsers = async (token: string | undefined, currentPage: number, url: string) => {
+const fetchDataAll = async (token: string | undefined, currentPage: number, url: string, params?: string) => {
     let message = ""
     try {
-
-        const response = await axios.get<Page<User>>(`${baseUrl}/api/${url}?size=${5}&page=${currentPage}`, {
+        const response = await axios.get<Page<User>>(`${baseUrl}/api/${url}?${params}&size=${5}&page=${currentPage}`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             },
@@ -134,7 +133,7 @@ const fetchUsers = async (token: string | undefined, currentPage: number, url: s
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = error.response.data.message;
+                message = error.response.data.messages;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -144,7 +143,7 @@ const fetchUsers = async (token: string | undefined, currentPage: number, url: s
     }
 };
 
-const fetchUser = async (token: string | undefined, id: number | undefined, url: string) => {
+const fetchData = async (token: string | undefined, id: number | undefined, url: string) => {
     let message = ""
     try {
         if (!id) return
@@ -165,7 +164,7 @@ const fetchUser = async (token: string | undefined, id: number | undefined, url:
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = error.response.data.message;
+                message = error.response.data.messages;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -175,7 +174,7 @@ const fetchUser = async (token: string | undefined, id: number | undefined, url:
     }
 };
 
-const deleteUser = async (token: string | undefined, id: number | undefined, url: string) => {
+const handleDelete = async (token: string | undefined, id: number | undefined, url: string) => {
     let message = ""
     try {
         if (!id) return
@@ -196,7 +195,7 @@ const deleteUser = async (token: string | undefined, id: number | undefined, url
             } else if (error.response.status === 422) {
                 message = "Dado já existente";
             } else {
-                message = error.response.data.message;
+                message = error.response.data.messages;
             }
         } else {
             message = "Erro ao cadastrar.";
@@ -206,4 +205,4 @@ const deleteUser = async (token: string | undefined, id: number | undefined, url
     }
 }
 
-export { handleCreate, handleUpdate, fetchUsers, fetchUser, deleteUser }
+export { handleCreate, handleUpdate, fetchData, fetchDataAll, handleDelete }

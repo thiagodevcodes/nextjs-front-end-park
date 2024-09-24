@@ -41,12 +41,12 @@ const NavAdmin: React.FC<NavAdminProps> = ({ isMobile }) => {
             <Calendar width={18}/>
              Mensalistas
           </Link>
-          <Link className={`${path === "/rotativos" ? "bg-zinc-900" : ""} hover:bg-zinc-900 transition-all flex items-center gap-2 px-5 py-2 w-full text-start text-white font-light`} href="/rotativos">
+          <Link className={`${path === "/movimentacoes" ? "bg-zinc-900" : ""} hover:bg-zinc-900 transition-all flex items-center gap-2 px-5 py-2 w-full text-start text-white font-light`} href="/movimentacoes">
             <Car width={18}/>
-            Rotativos
+            Movimentações
           </Link>
           { isAdmin &&
-            <Link className={`${path === "/admin/users" ? "bg-zinc-900" : ""} hover:bg-zinc-900 transition-all flex items-center gap-2 px-5 py-2 w-full text-start text-white font-light`} href="/users">
+            <Link className={`${path === "/users" ? "bg-zinc-900" : ""} hover:bg-zinc-900 transition-all flex items-center gap-2 px-5 py-2 w-full text-start text-white font-light`} href="/users">
                <Users width={18}/>
                Usuários
             </Link>    
@@ -65,7 +65,7 @@ const NavAdmin: React.FC<NavAdminProps> = ({ isMobile }) => {
              Projetos
           </Link>  
           { isAdmin &&
-            <Link className={`${path === "/admin/users" ? "bg-zinc-900" : ""} flex items-center justify-center gap-2 px-5 py-2 w-full text-start text-white font-bold`} href="/admin/users">
+            <Link className={`${path === "/users" ? "bg-zinc-900" : ""} flex items-center justify-center gap-2 px-5 py-2 w-full text-start text-white font-bold`} href="/admin/users">
                Usuários
             </Link>    
           }
